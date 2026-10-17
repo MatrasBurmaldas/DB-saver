@@ -10,10 +10,24 @@ class Database:
         # шлях до бази поруч з файлом main.py
         folder = os.path.dirname(os.path.abspath(__file__))
         full_path = os.path.join(folder, path)
+        # перевірка чи файл бази вже існує
+        is_new = not os.path.exists(full_path)
         # підключення до файлу бази
         self.conn = sqlite3.connect(full_path)
-        # виведення шляху щоб знати де файл
-        print("база даних:", full_path)
+        # таблиця створюється лише якщо її нема тому дані не чіпаються
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS sites "
+            "(id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT UNIQUE)"
+        )
+        self.conn.commit()
+        # повідомлення користувачу про стан бази
+        if is_new:
+            print("створено нову базу даних:", full_path)
+        else:
+            print("знайдено наявну базу даних:", full_path)
+
+    def add_site(self, url):
+
 
     def add_site(self, url):
         # додавання посилання без дублікатів
